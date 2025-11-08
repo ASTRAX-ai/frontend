@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Astrax — AI Portfolio Manager on Solana
 
-## Getting Started
+> **"From USDT to Any"**  
+> Connect → Ask → Trade. All in one AI chat.
 
-First, run the development server:
+Live Demo: [https://astrax.vercel.app](https://astrax.vercel.app)  
+GitHub: [github.com/username/astrax-fe](https://github.com/username/astrax-fe)
 
+---
+
+## Features
+
+| Fitur | Status |
+|------|--------|
+| Real **Phantom Wallet Connect** (Devnet) | Done |
+| **AI Agent "Jup"** — natural language rebalance | Done |
+| Before/After **Pie Chart** + Risk Score | Done |
+| **One-Click Rebalance** via Jupiter (mock) | Done |
+| **Confetti + Success Animation** | Done |
+| Dark Mode + Neon Gradient | Done |
+| English Only | Done |
+
+---
+
+## Tech Stack
+
+- **Next.js 16** (App Router + Turbopack)
+- **Tailwind CSS** + **shadcn/ui**
+- **@solana/wallet-adapter** (real Phantom)
+- **Recharts** (pie chart)
+- **Lucide Icons**
+- **TypeScript**
+
+---
+
+## Quick Start (Local)
+
+### 1. Clone & Install
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+git clone https://github.com/ASTRAX-ai/frontend.git
+cd astrax-fe
+npm install
