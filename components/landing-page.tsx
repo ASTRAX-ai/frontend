@@ -1,15 +1,20 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ConnectWallet } from "./connect-wallet"
+import { useWallet } from "@solana/wallet-adapter-react"
+import { PhantomWalletName } from "@solana/wallet-adapter-phantom"
+import { useAuth } from "@/lib/context/auth-context"
 import { Wallet, MessageSquare, Zap } from "lucide-react"
 
 interface LandingPageProps {
-  onConnect: (address: string) => void
+  onConnect: (publicKey: string) => void
 }
 
 export function LandingPage({ onConnect }: LandingPageProps) {
-  const [showConnect, setShowConnect] = useState(false)
+  const wallet = useWallet()
+  const { select, disconnect } = wallet
+  const { login } = useAuth()
+  const [isAuthenticating, setIsAuthenticating] = useState(false)
   const [particles, setParticles] = useState<Array<{ id: number; x: number; y: number; duration: number }>>([])
 
   useEffect(() => {
@@ -54,7 +59,39 @@ export function LandingPage({ onConnect }: LandingPageProps) {
             </h1>
           </div>
           <button
-            onClick={() => setShowConnect(true)}
+            onClick={async () => {
+              // Direct connect flow from the header button
+              try {
+                setIsAuthenticating(true)
+                // initiate Phantom select
+                await select(PhantomWalletName)
+
+                // wait for wallet to be connected and provide publicKey
+                const start = Date.now()
+                while (!wallet.connected || !wallet.publicKey) {
+                  if (Date.now() - start > 10000) {
+                    throw new Error("Timeout waiting for Phantom connection")
+                  }
+                  // small delay
+                  await new Promise((r) => setTimeout(r, 150))
+                }
+
+                const pub = wallet.publicKey!.toBase58()
+                console.log('[LandingPage] wallet selected, starting login for', pub)
+                await login(pub)
+                console.log('[LandingPage] login successful, calling onConnect')
+                onConnect(pub)
+              } catch (err) {
+                console.error('[LandingPage] direct connect failed:', err)
+                try {
+                  await disconnect()
+                } catch (e) {
+                  /* ignore */
+                }
+              } finally {
+                setIsAuthenticating(false)
+              }
+            }}
             className="px-6 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all"
           >
             Connect
@@ -81,7 +118,29 @@ export function LandingPage({ onConnect }: LandingPageProps) {
             </p>
 
             <button
-              onClick={() => setShowConnect(true)}
+              onClick={async () => {
+                // Hero CTA direct connect flow
+                try {
+                  setIsAuthenticating(true)
+                  await select(PhantomWalletName)
+                  const start = Date.now()
+                  while (!wallet.connected || !wallet.publicKey) {
+                    if (Date.now() - start > 10000) {
+                      throw new Error("Timeout waiting for Phantom connection")
+                    }
+                    await new Promise((r) => setTimeout(r, 150))
+                  }
+                  const pub = wallet.publicKey!.toBase58()
+                  console.log('[LandingPage] hero CTA wallet selected, starting login for', pub)
+                  await login(pub)
+                  onConnect(pub)
+                } catch (err) {
+                  console.error('[LandingPage] hero direct connect failed:', err)
+                  try { await disconnect() } catch (e) {}
+                } finally {
+                  setIsAuthenticating(false)
+                }
+              }}
               className="px-8 sm:px-10 py-4 sm:py-5 rounded-xl bg-gradient-to-r from-purple-600 via-pink-500 to-teal-500 text-white font-bold text-lg hover:shadow-2xl hover:shadow-purple-500/50 transition-all transform hover:scale-105 active:scale-95 animate-pulse-glow"
             >
               Connect Wallet & Start
@@ -155,8 +214,7 @@ export function LandingPage({ onConnect }: LandingPageProps) {
         </footer>
       </main>
 
-      {/* Connect Modal */}
-      {showConnect && <ConnectWallet onConnect={onConnect} onClose={() => setShowConnect(false)} />}
+  {/* Modal removed: primary flow now uses direct Phantom selection from the header and hero buttons */}
 
       <style jsx>{`
         @keyframes float-particle {
