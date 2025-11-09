@@ -6,20 +6,20 @@ import { Dashboard } from "@/components/dashboard"
 
 export default function Page() {
   const [isConnected, setIsConnected] = useState(false)
-  const [walletAddress, setWalletAddress] = useState<string | null>(null)
+  const [walletPublicKey, setWalletPublicKey] = useState<string | null>(null)
 
-  const handleConnect = (address: string) => {
-    setWalletAddress(address)
+  const handleConnect = (publicKey: string) => {
+    setWalletPublicKey(publicKey)
     setIsConnected(true)
   }
 
   const handleDisconnect = () => {
     setIsConnected(false)
-    setWalletAddress(null)
+    setWalletPublicKey(null)
   }
 
-  if (isConnected && walletAddress) {
-    return <Dashboard walletAddress={walletAddress} onDisconnect={handleDisconnect} />
+  if (isConnected && walletPublicKey) {
+    return <Dashboard walletPublicKey={walletPublicKey} onDisconnect={handleDisconnect} />
   }
 
   return <LandingPage onConnect={handleConnect} />
