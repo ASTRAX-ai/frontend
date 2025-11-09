@@ -6,7 +6,7 @@ import { AIChart } from "./ai-chart"
 
 const PREDEFINED_RESPONSES = {
   hello: {
-    text: "Yo bro, I'm Jup, your AI portfolio manager. Looking at your holdings: 72% SOL, 28% USDC. Total value $12,420 with +2.8% 24h gain. Pretty solid, but why not try a 60/40 rebalance? That's the sweet spot for long-term hodlers.",
+    text: "Yo bro, I'm astrax, your AI portfolio manager. Looking at your holdings: 72% SOL, 28% USDC. Total value $12,420 with +2.8% 24h gain. Pretty solid, but why not try a 60/40 rebalance? That's the sweet spot for long-term hodlers.",
     hasChart: true,
     chartData: [
       { name: "Current", SOL: 72, USDC: 28 },
@@ -41,8 +41,8 @@ export function ChatInterface({ onExecute }: ChatInterfaceProps) {
   useEffect(() => {
     const timer = setTimeout(() => {
       const firstMessage = {
-        role: "jup",
-        text: "Yo bro, I'm Jup, your AI portfolio manager. Looking at your holdings: 72% SOL, 28% USDC. Total value $12,420 with +2.8% 24h gain. Pretty solid, but why not try a 60/40 rebalance? That's the sweet spot for long-term hodlers.",
+        role: "astrax",
+        text: "Yo bro, I'm astrax, your AI portfolio manager. Looking at your holdings: 72% SOL, 28% USDC. Total value $12,420 with +2.8% 24h gain. Pretty solid, but why not try a 60/40 rebalance? That's the sweet spot for long-term hodlers.",
         hasChart: true,
         chartData: [
           { name: "Current", SOL: 72, USDC: 28 },
@@ -74,14 +74,14 @@ export function ChatInterface({ onExecute }: ChatInterfaceProps) {
       response = PREDEFINED_RESPONSES.hello
     }
 
-    const jupMessage = {
-      role: "jup",
+    const astraxMessage = {
+      role: "astrax",
       text: response.text,
       hasChart: response.hasChart,
       chartData: response.chartData,
     }
 
-    setMessages((prev) => [...prev, jupMessage])
+    setMessages((prev) => [...prev, astraxMessage])
     setIsLoading(false)
   }
 
@@ -100,7 +100,7 @@ export function ChatInterface({ onExecute }: ChatInterfaceProps) {
 
   return (
     <div className="glass rounded-xl p-6 h-[600px] flex flex-col">
-      <h2 className="text-lg font-bold mb-4">Chat with Jup</h2>
+      <h2 className="text-lg font-bold mb-4">Chat with astrax</h2>
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto mb-4 space-y-4 pr-2">
@@ -144,7 +144,7 @@ export function ChatInterface({ onExecute }: ChatInterfaceProps) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyPress={(e) => e.key === "Enter" && handleSend()}
-          placeholder="Ask Jup anything..."
+          placeholder="Ask astrax anything..."
           className="flex-1 bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:bg-white/15 transition-all"
         />
         <button

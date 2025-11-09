@@ -77,7 +77,7 @@ export function TransactionModal({ data, onConfirm, onCancel }: TransactionModal
         {/* Warning */}
         <div className="flex gap-2 mb-6 p-3 bg-yellow-500/10 rounded-lg border border-yellow-500/30">
           <AlertCircle className="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5" />
-          <div className="text-xs text-yellow-200">Transactions lu akan di-sign pake Phantom wallet</div>
+          <div className="text-xs text-yellow-200">Transactions will be signed with your Phantom wallet.</div>
         </div>
 
         {/* Actions */}

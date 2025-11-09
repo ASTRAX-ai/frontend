@@ -13,7 +13,7 @@ GitHub: [github.com/username/astrax-fe](https://github.com/username/astrax-fe)
 | Fitur | Status |
 |------|--------|
 | Real **Phantom Wallet Connect** (Devnet) | Done |
-| **AI Agent "Jup"** — natural language rebalance | Done |
+| **AI Agent "astrax"** — natural language rebalance | Done |
 | Before/After **Pie Chart** + Risk Score | Done |
 | **One-Click Rebalance** via Jupiter (mock) | Done |
 | **Confetti + Success Animation** | Done |

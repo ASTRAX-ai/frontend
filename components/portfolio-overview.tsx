@@ -202,7 +202,7 @@ export function PortfolioOverview({ onExecute }: PortfolioOverviewProps) {
 
       {/* Suggested Rebalance */}
       <div className="glass rounded-xl p-6 border border-purple-500/30">
-        <h3 className="font-bold mb-3">Jup's Recommendation</h3>
+        <h3 className="font-bold mb-3">astrax's Recommendation</h3>
         <p className="text-sm text-gray-400 mb-4">
           Increase SOL allocation ke 60% for better long-term growth
         </p>
