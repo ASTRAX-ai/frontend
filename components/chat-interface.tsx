@@ -3,8 +3,16 @@
 import { useState, useEffect } from "react"
 import { Send } from "lucide-react"
 import { AIChart } from "./ai-chart"
+import { useWallet } from "@solana/wallet-adapter-react"
+import { TypingAnimation } from "./TypingAnimation"
 
-const PREDEFINED_RESPONSES = {
+interface ResponseType {
+  text: string
+  hasChart: boolean
+  chartData?: any
+}
+
+const PREDEFINED_RESPONSES: Record<string, ResponseType> = {
   hello: {
     text: "Yo bro, I'm Jup, your AI portfolio manager. Looking at your holdings: 72% SOL, 28% USDC. Total value $12,420 with +2.8% 24h gain. Pretty solid, but why not try a 60/40 rebalance? That's the sweet spot for long-term hodlers.",
     hasChart: true,
@@ -32,13 +40,19 @@ interface ChatInterfaceProps {
 }
 
 export function ChatInterface({ onExecute }: ChatInterfaceProps) {
+  const { connected } = useWallet()
   const [messages, setMessages] = useState<Array<{ role: string; text: string; hasChart?: boolean; chartData?: any }>>(
     [],
   )
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [isTyping, setIsTyping] = useState(false)
+  const [currentTypingMessage, setCurrentTypingMessage] = useState<{ role: string; text: string; hasChart?: boolean; chartData?: any } | null>(null)
 
+  // Show welcome message after wallet connects
   useEffect(() => {
+    if (!connected) return
+
     const timer = setTimeout(() => {
       const firstMessage = {
         role: "jup",
@@ -49,10 +63,21 @@ export function ChatInterface({ onExecute }: ChatInterfaceProps) {
           { name: "Suggested", SOL: 60, USDC: 40 },
         ],
       }
-      setMessages([firstMessage])
+
+      setCurrentTypingMessage(firstMessage)
+      setIsTyping(true)
     }, 600)
+
     return () => clearTimeout(timer)
-  }, [])
+  }, [connected])
+
+  // When typing finishes, commit the message to the chat
+  useEffect(() => {
+    if (!isTyping && currentTypingMessage) {
+      setMessages((prev) => [...prev, currentTypingMessage])
+      setCurrentTypingMessage(null)
+    }
+  }, [isTyping, currentTypingMessage])
 
   const handleSend = async () => {
     if (!input.trim()) return
@@ -62,8 +87,8 @@ export function ChatInterface({ onExecute }: ChatInterfaceProps) {
     setInput("")
     setIsLoading(true)
 
-    // Simulate AI response delay
-    await new Promise((resolve) => setTimeout(resolve, 800))
+    // Simulate AI thinking
+    await new Promise<void>((resolve) => setTimeout(resolve, 800))
 
     const lowerInput = input.toLowerCase()
     let response = PREDEFINED_RESPONSES.default
@@ -81,7 +106,8 @@ export function ChatInterface({ onExecute }: ChatInterfaceProps) {
       chartData: response.chartData,
     }
 
-    setMessages((prev) => [...prev, jupMessage])
+    setCurrentTypingMessage(jupMessage)
+    setIsTyping(true)
     setIsLoading(false)
   }
 
@@ -100,7 +126,7 @@ export function ChatInterface({ onExecute }: ChatInterfaceProps) {
 
   return (
     <div className="glass rounded-xl p-6 h-[600px] flex flex-col">
-      <h2 className="text-lg font-bold mb-4">Chat with Jup</h2>
+      <h2 className="text-lg font-bold mb-4">{!connected ? "Connect Wallet to Chat with Jup" : "Chat with Jup"}</h2>
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto mb-4 space-y-4 pr-2">
@@ -124,6 +150,32 @@ export function ChatInterface({ onExecute }: ChatInterfaceProps) {
             </div>
           </div>
         ))}
+
+        {/* Typing message (not yet committed to messages array) */}
+        {currentTypingMessage && isTyping && (
+          <div className="flex justify-start">
+            <div className="max-w-xs rounded-lg p-3 bg-white/5 text-slate-100">
+              <TypingAnimation
+                text={currentTypingMessage.text}
+                delay={0}
+                speed={30}
+                onComplete={() => setIsTyping(false)}
+              />
+              {currentTypingMessage.hasChart && currentTypingMessage.chartData && (
+                <div className="mt-3 pt-3 border-t border-white/10">
+                  <AIChart data={currentTypingMessage.chartData} />
+                  <button
+                    onClick={handleExecuteFromChart}
+                    className="w-full mt-2 py-2 text-xs rounded bg-gradient-to-r from-purple-600 to-teal-500 text-white hover:shadow-lg transition-all"
+                  >
+                    Execute This Plan
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {isLoading && (
           <div className="flex justify-start">
             <div className="bg-white/5 rounded-lg p-3">
@@ -137,6 +189,13 @@ export function ChatInterface({ onExecute }: ChatInterfaceProps) {
         )}
       </div>
 
+      {/* Helper Text */}
+      {input.trim() === "" && messages.length > 0 && !isTyping && !isLoading && (
+        <div className="mb-4 text-center text-sm text-slate-300">
+          <TypingAnimation text={"How can I help you, OG?"} delay={0} speed={40} onComplete={() => {}} />
+        </div>
+      )}
+
       {/* Input */}
       <div className="flex gap-2">
         <input
@@ -144,12 +203,13 @@ export function ChatInterface({ onExecute }: ChatInterfaceProps) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyPress={(e) => e.key === "Enter" && handleSend()}
-          placeholder="Ask Jup anything..."
-          className="flex-1 bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:bg-white/15 transition-all"
+          placeholder={connected ? "Ask Jup anything..." : "Connect wallet to chat..."}
+          disabled={!connected}
+          className="flex-1 bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:bg-white/15 transition-all disabled:opacity-50"
         />
         <button
           onClick={handleSend}
-          disabled={isLoading || !input.trim()}
+          disabled={isLoading || !input.trim() || !connected}
           className="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-teal-500 text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all disabled:opacity-50"
         >
           <Send className="w-4 h-4" />
