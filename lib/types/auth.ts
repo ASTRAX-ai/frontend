@@ -4,7 +4,8 @@ export interface NonceResponse {
 }
 
 export interface VerifyResponse {
-  accessToken: string;
+  token?: string;           // Actual API response uses 'token'
+  accessToken?: string;     // Also support 'accessToken'
   refreshToken: string;
   user: {
     publicKey: string;

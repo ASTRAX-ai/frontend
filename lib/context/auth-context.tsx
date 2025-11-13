@@ -34,14 +34,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       // Verify signature
       console.log('[Auth] sending verify request');
-      const { accessToken, refreshToken, user } = await AuthService.verifySignature(publicKey, signature);
-      console.log('[Auth] verify succeeded, user.publicKey=', user?.publicKey);
+      const response = await AuthService.verifySignature(publicKey, signature);
+      
+      // Get token from either 'token' or 'accessToken' field
+      const accessToken = response.token || response.accessToken;
+      const refreshToken = response.refreshToken;
+      
+      if (!accessToken) {
+        throw new Error('No token received from verify response');
+      }
+      
+      console.log('[Auth] verify succeeded, user.publicKey=', response.user?.publicKey);
+      console.log('[Auth] token received (truncated):', accessToken?.slice?.(0, 16));
 
       // Update state
       setAuth({
         accessToken,
         refreshToken,
-        publicKey: user.publicKey,
+        publicKey: response.user.publicKey,
         isAuthenticated: true,
       });
 

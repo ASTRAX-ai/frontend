@@ -53,7 +53,15 @@ export class AuthService {
         throw await response.json() as AuthError;
       }
 
-      return await response.json() as VerifyResponse;
+      const data = await response.json();
+      
+      // Normalize the response - handle both 'token' and 'accessToken'
+      return {
+        token: data.token || data.accessToken,
+        accessToken: data.token || data.accessToken,
+        refreshToken: data.refreshToken,
+        user: data.user,
+      } as VerifyResponse;
     } catch (error) {
       throw error;
     }
