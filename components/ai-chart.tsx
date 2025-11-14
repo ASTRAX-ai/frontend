@@ -7,8 +7,10 @@ interface AIChartProps {
 }
 
 export function AIChart({ data }: AIChartProps) {
+
   // Detect chart type based on data
   const isPie = data[0]?.SOL !== undefined
+
 
   if (isPie) {
     // Pie chart for allocation

@@ -7,11 +7,11 @@ import { TransactionModal } from "./transaction-modal"
 import { LogOut } from "lucide-react"
 
 interface DashboardProps {
-  walletAddress: string
+  walletPublicKey: string
   onDisconnect: () => void
 }
 
-export function Dashboard({ walletAddress, onDisconnect }: DashboardProps) {
+export function Dashboard({ walletPublicKey, onDisconnect }: DashboardProps) {
   const [showTransaction, setShowTransaction] = useState(false)
   const [transactionData, setTransactionData] = useState<any>(null)
   const [showConfetti, setShowConfetti] = useState(false)
@@ -47,7 +47,7 @@ export function Dashboard({ walletAddress, onDisconnect }: DashboardProps) {
 
           <div className="flex items-center gap-4">
             <div className="text-sm text-gray-400">
-              {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+              {walletPublicKey.slice(0, 6)}...{walletPublicKey.slice(-4)}
             </div>
             <button
               onClick={onDisconnect}
